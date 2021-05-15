@@ -14,10 +14,12 @@ static void	stop_SDL(void);
 int
 main()
 {
+	char exits[32];
 	char buffer[70];
 	short int cur_letter;
 	int len;
 	int results;
+	int y_val;
 	SDL_Event event;
 
 	/* Create initial display */
@@ -25,7 +27,8 @@ main()
 		1280,		/* width */
 		720,		/* height */
 		"TextGame",	/* name */
-		1.0,		/* scale */
+		1.0,		/* scale_x */
+		1.0,		/* scale_y */
 		NULL,		/* window */
 		NULL,		/* renderer */
 		SDL_FALSE,	/* vsync */
@@ -41,10 +44,14 @@ main()
 	cur_letter = 0; buffer[0] = '|'; buffer[1] = '\0';
 	while(cur_screen.running == SDL_TRUE) {
 		clear_disp(&cur_screen);
-		output(&cur_screen, 10, 10, room_name(cur_screen.room), 2.0);
-		output(&cur_screen, 10, 56 * cur_screen.scale, room_desc(cur_screen.room), 1.0);
-		output(&cur_screen, 10, 692 * cur_screen.scale, "COMMAND> ", 1.0);
-		output(&cur_screen, 10 + 144 * cur_screen.scale, 692 * cur_screen.scale, buffer, 1.0);
+		y_val = output(&cur_screen, 10, 10, room_name(cur_screen.room), 2.0);
+		y_val = output(&cur_screen, 10, y_val, "\n", 1.0);
+		y_val = output(&cur_screen, 10, y_val, room_desc(cur_screen.room), 1.0);
+		y_val = output(&cur_screen, 10, y_val, "\n", 1.0);
+		room_exits(cur_screen.room, exits);
+		output(&cur_screen, 10, y_val, exits, 1.0);
+		output(&cur_screen, 10, 692 * cur_screen.scale_y, "COMMAND> ", 1.0);
+		output(&cur_screen, 10 + 144 * cur_screen.scale_x, 692 * cur_screen.scale_y, buffer, 1.0);
 		present_disp(&cur_screen);
 		SDL_Delay(10);
 		if (SDL_PollEvent(&event) == 0) continue;
@@ -63,8 +70,13 @@ main()
 				cur_letter = 0; buffer[0] = '|'; buffer[1] = '\0';
 				if (results == QUIT) {
 					cur_screen.running = SDL_FALSE;
+				} else if (results == RESOLUTION) {
+					display_kill(&cur_screen);
+					display_init(&cur_screen, cur_screen.vsync);
 				}
 			}
+		} else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {
+			change_resolution(&cur_screen, event.window.data1, event.window.data2);
 		}
 	}
 	

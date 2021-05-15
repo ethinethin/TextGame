@@ -7,7 +7,8 @@ struct screen {
 	int w;
 	int h;
 	const char *name;
-	float scale;
+	float scale_x;
+	float scale_y;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_bool vsync;

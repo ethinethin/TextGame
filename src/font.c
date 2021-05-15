@@ -1,3 +1,6 @@
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <SDL2/SDL.h>
 #include "disp.h"
@@ -9,6 +12,7 @@
 
 /* Function prototype */
 static void	draw_char(struct screen *cur_screen, int x, int y, int letter, float scale);
+static void	format_text(char *text, char formatted[79], int n);
 
 void
 load_font(struct screen *cur_screen)
@@ -50,32 +54,72 @@ unload_font(struct screen *cur_screen)
 	free(cur_screen->font);
 }
 
-void
+int
 output(struct screen *cur_screen, int x, int y, char *sentence, float scale)
 {
+	char formatted[1024];
 	int i;
 	int cur_x, cur_y;
 	int len;
 
-	for (i = 0, len = strlen(sentence), cur_x = x, cur_y = y; i < len; i++) {
-		if (sentence[i] != '\n') {
-			if (sentence[i] - 32 >= 0 && sentence[i] - 32 < 95) {
-				draw_char(cur_screen, cur_x, cur_y, sentence[i] - 32, scale);
+	/* Format the text*/
+	format_text(sentence, formatted, 78/scale);
+	
+	/* Output the text */ 
+	for (i = 0, len = strlen(formatted), cur_x = x, cur_y = y; i < len; i++) {
+		if (formatted[i] != '\n') {
+			if (formatted[i] - 32 >= 0 && formatted[i] - 32 < 95) {
+				draw_char(cur_screen, cur_x, cur_y, toupper(formatted[i]) - 32, scale);
 			} else {
 				draw_char(cur_screen, cur_x, cur_y, '?' - 32, scale);
 			}
-			cur_x += font_w * scale * cur_screen->scale;
+			cur_x += font_w * scale * cur_screen->scale_x;
 		}
-		if (cur_x >= cur_screen->w - font_w || sentence[i] == '\n') {
+		if (formatted[i] == '\n') {
 			cur_x = x;
-			cur_y += font_h * scale * cur_screen->scale;
+			cur_y += font_h * scale * cur_screen->scale_y;
 		}
 	}
+	cur_y += font_h * scale * cur_screen->scale_y;
+	return cur_y;
 }
 
 static void
 draw_char(struct screen *cur_screen, int x, int y, int letter, float scale)
 {
-	SDL_Rect rect = {x, y, font_w * scale * cur_screen->scale, font_h * scale * cur_screen->scale};
+	SDL_Rect rect = {x, y, font_w * scale * cur_screen->scale_x, font_h * scale * cur_screen->scale_y};
 	SDL_RenderCopyEx(cur_screen->renderer, cur_screen->font[letter], NULL, &rect, 0, NULL, 0);
+}
+
+static void
+format_text(char *text, char formatted[1024], int n)
+{
+	int form_i;
+	int len;
+	int text_i;
+	int x_pos;
+	
+	len = strlen(text);
+	/* If the string fits in a single line, just copy it */
+	
+	/* Reformat text to fit window */
+	for (text_i = 0, form_i = 0, x_pos = 0; text_i < len; text_i++, form_i++, x_pos++) {
+		/* Check if at end of line */
+		if (x_pos > n) {
+			/* If you're on a space, replace a new line */
+			if (text[text_i] == ' ') {
+				formatted[form_i] = '\n';
+			} else {
+				/* Go backwords looking for a space */
+				while (text[text_i] != ' ') {
+					text_i--; form_i--;
+				}
+				formatted[form_i] = '\n';
+			}
+			x_pos = 0;
+		} else {
+			formatted[form_i] = text[text_i];
+		}
+	}
+	formatted[form_i] = '\0';
 }

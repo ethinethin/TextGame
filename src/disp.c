@@ -8,7 +8,7 @@ void
 display_init(struct screen *cur_screen, SDL_bool vsync)
 {
 	/* Create the main window and renderer */
-	cur_screen->window = SDL_CreateWindow(cur_screen->name, 100, 100, cur_screen->w, cur_screen->h, 0);
+	cur_screen->window = SDL_CreateWindow(cur_screen->name, 100, 100, cur_screen->w, cur_screen->h, SDL_WINDOW_RESIZABLE);
 	if (vsync == SDL_TRUE) {
 		cur_screen->renderer = SDL_CreateRenderer(cur_screen->window, -1, SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC|SDL_RENDERER_TARGETTEXTURE);
 	} else {
@@ -41,4 +41,18 @@ void
 present_disp(struct screen *cur_screen)
 {
 	SDL_RenderPresent(cur_screen->renderer);
+}
+
+SDL_bool
+change_resolution(struct screen *cur_screen, int w, int h)
+{
+	if (cur_screen->w != w || cur_screen->h != h) {
+		cur_screen->w = w;
+		cur_screen->h = h;
+		cur_screen->scale_x = w/1280.0;
+		cur_screen->scale_y = h/720.0;
+		return SDL_TRUE;	
+	} else {
+		return SDL_FALSE;
+	}
 }
