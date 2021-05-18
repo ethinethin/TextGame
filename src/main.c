@@ -32,13 +32,14 @@ main()
 		NULL,		/* window */
 		NULL,		/* renderer */
 		SDL_FALSE,	/* vsync */
+		SDL_FALSE,	/* fullscreen */
 		SDL_FALSE,	/* running */
 		NULL,		/* font */
 		0		/* room */
 	};
 	/* Stat SDL and initialize display */
 	start_SDL();
-	display_init(&cur_screen, cur_screen.vsync);
+	display_init(&cur_screen, cur_screen.fullscreen, cur_screen.vsync);
 	
 	/* Enter main loop and output some text to the screen */
 	cur_letter = 0; buffer[0] = '|'; buffer[1] = '\0';
@@ -72,7 +73,7 @@ main()
 					cur_screen.running = SDL_FALSE;
 				} else if (results == RESOLUTION) {
 					display_kill(&cur_screen);
-					display_init(&cur_screen, cur_screen.vsync);
+					display_init(&cur_screen, cur_screen.fullscreen, cur_screen.vsync);
 				}
 			}
 		} else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_RESIZED) {

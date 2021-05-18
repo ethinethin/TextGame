@@ -12,6 +12,7 @@ struct screen {
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_bool vsync;
+	SDL_bool fullscreen;
 	SDL_bool running;
 	SDL_Texture **font;
 	int room;

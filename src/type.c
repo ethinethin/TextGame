@@ -30,34 +30,53 @@ handle_typing(SDL_Event event, char *buffer, short int cur_letter)
 int
 handle_input(struct screen *cur_screen, char *buffer)
 {
+	char allwords[100];
+	char *words[8];
+	int i;
 	int len;
 	int room = -1;
 	
 	len = strlen(buffer);
 	if (len == 0) return NOMOVE;
 	
-	/* Check if commands were entered */
-	if (strncmp(buffer, "NORTH", len) == 0) {
+	/* Copy the line to a new variable that we can tokenize */
+	strncpy(allwords, buffer, len);
+	/* Split the line into words */
+	*words = strtok(allwords, " \n");
+	if (*words == NULL) return NOMOVE;
+	for (i = 1; i < 8; i++) {
+		*(words + i) = strtok(NULL, " \n");
+	}
+	
+	/* Parse input */
+	if (strncmp(*words, "QUIT", 4) == 0 || strncmp(*words, "EXIT", 4) == 0) {
+	    	return QUIT;
+	} else if (strncmp(*words, "HELP", 4) == 0) {
+		return HELP;
+	} else if (strncmp(*words, "LOOK", 4) == 0 && *(words + 1) == NULL) {
+		return LOOKROOM;
+	} else if (strncmp(*words, "NORTH", len) == 0) {
 		room = get_exit(cur_screen->room, NORTH);
-	} else if (strncmp(buffer, "EAST", len) == 0) {
+	} else if (strncmp(*words, "EAST", len) == 0) {
 		room = get_exit(cur_screen->room, EAST);
-	} else if (strncmp(buffer, "SOUTH", len) == 0) {
+	} else if (strncmp(*words, "SOUTH", len) == 0) {
 		room = get_exit(cur_screen->room, SOUTH);
-	} else if (strncmp(buffer, "WEST", len) == 0) {
+	} else if (strncmp(*words, "WEST", len) == 0) {
 		room = get_exit(cur_screen->room, WEST);
-	} else if (strncmp(buffer, "QUIT", 5) == 0 ||
-		   strncmp(buffer, "EXIT", 5) == 0) {
-		   	return QUIT;
-	} else if (strncmp(buffer, "RES1", 4) == 0) {
+	} else if (strncmp(*words, "RES1", 4) == 0) {
 		if (change_resolution(cur_screen, 1024, 576) == SDL_TRUE) return RESOLUTION;
-	} else if (strncmp(buffer, "RES2", 4) == 0) {
+	} else if (strncmp(*words, "RES2", 4) == 0) {
 		if (change_resolution(cur_screen, 1280, 720) == SDL_TRUE) return RESOLUTION;
-	} else if (strncmp(buffer, "RES3", 4) == 0) {
+	} else if (strncmp(*words, "RES3", 4) == 0) {
 		if (change_resolution(cur_screen, 1600, 900) == SDL_TRUE) return RESOLUTION;
-	} else if (strncmp(buffer, "RES4", 4) == 0) {
+	} else if (strncmp(*words, "RES4", 4) == 0) {
 		if (change_resolution(cur_screen, 800, 600) == SDL_TRUE) return RESOLUTION;
-	} else if (strncmp(buffer, "RES5", 4) == 0) {
+	} else if (strncmp(*words, "RES5", 4) == 0) {
 		if (change_resolution(cur_screen, 640, 480) == SDL_TRUE) return RESOLUTION;
+	} else if (strncmp(*words, "FULL", 4) == 0) {
+		if (toggle_fullscreen(cur_screen, SDL_TRUE) == SDL_TRUE) return RESOLUTION;
+	} else if (strncmp(*words, "WIND", 4) == 0) {
+		if (toggle_fullscreen(cur_screen, SDL_FALSE) == SDL_TRUE) return RESOLUTION;
 	}
 	
 	/* Change room if necessary */
