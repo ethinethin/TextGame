@@ -12,7 +12,7 @@
 
 /* Function prototype */
 static void	draw_char(struct screen *cur_screen, int x, int y, int letter, float scale);
-static void	format_text(char *text, char formatted[79], int n);
+static void	format_text(char *text, char formatted[1024], int n);
 
 void
 load_font(struct screen *cur_screen)
@@ -73,21 +73,21 @@ output(struct screen *cur_screen, int x, int y, char *sentence, float scale)
 			} else {
 				draw_char(cur_screen, cur_x, cur_y, '?' - 32, scale);
 			}
-			cur_x += font_w * scale * cur_screen->scale_x;
+			cur_x += font_w * scale;
 		}
 		if (formatted[i] == '\n') {
 			cur_x = x;
-			cur_y += font_h * scale * cur_screen->scale_y;
+			cur_y += font_h * scale;
 		}
 	}
-	cur_y += font_h * scale * cur_screen->scale_y;
+	cur_y += font_h * scale;
 	return cur_y;
 }
 
 static void
 draw_char(struct screen *cur_screen, int x, int y, int letter, float scale)
 {
-	SDL_Rect rect = {x, y, font_w * scale * cur_screen->scale_x, font_h * scale * cur_screen->scale_y};
+	SDL_Rect rect = {x, y, font_w * scale, font_h * scale};
 	SDL_RenderCopyEx(cur_screen->renderer, cur_screen->font[letter], NULL, &rect, 0, NULL, 0);
 }
 

@@ -7,12 +7,11 @@ struct screen {
 	int w;
 	int h;
 	const char *name;
-	float scale_x;
-	float scale_y;
 	SDL_Window *window;
 	SDL_Renderer *renderer;
+	SDL_Texture *output;
 	SDL_bool vsync;
-	SDL_bool fullscreen;
+	int fullscreen;
 	SDL_bool running;
 	SDL_Texture **font;
 	int room;

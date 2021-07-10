@@ -27,12 +27,11 @@ main()
 		1280,		/* width */
 		720,		/* height */
 		"TextGame",	/* name */
-		1.0,		/* scale_x */
-		1.0,		/* scale_y */
 		NULL,		/* window */
 		NULL,		/* renderer */
+		NULL,		/* output */
 		SDL_FALSE,	/* vsync */
-		SDL_FALSE,	/* fullscreen */
+		2,		/* fullscreen */
 		SDL_FALSE,	/* running */
 		NULL,		/* font */
 		0		/* room */
@@ -51,8 +50,8 @@ main()
 		y_val = output(&cur_screen, 10, y_val, "\n", 1.0);
 		room_exits(cur_screen.room, exits);
 		output(&cur_screen, 10, y_val, exits, 1.0);
-		output(&cur_screen, 10, 692 * cur_screen.scale_y, "COMMAND> ", 1.0);
-		output(&cur_screen, 10 + 144 * cur_screen.scale_x, 692 * cur_screen.scale_y, buffer, 1.0);
+		output(&cur_screen, 10, 692, "COMMAND> ", 1.0);
+		output(&cur_screen, 10 + 144, 692, buffer, 1.0);
 		present_disp(&cur_screen);
 		SDL_Delay(10);
 		if (SDL_PollEvent(&event) == 0) continue;

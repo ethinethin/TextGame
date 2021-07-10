@@ -73,10 +73,12 @@ handle_input(struct screen *cur_screen, char *buffer)
 		if (change_resolution(cur_screen, 800, 600) == SDL_TRUE) return RESOLUTION;
 	} else if (strncmp(*words, "RES5", 4) == 0) {
 		if (change_resolution(cur_screen, 640, 480) == SDL_TRUE) return RESOLUTION;
-	} else if (strncmp(*words, "FULL", 4) == 0) {
-		if (toggle_fullscreen(cur_screen, SDL_TRUE) == SDL_TRUE) return RESOLUTION;
-	} else if (strncmp(*words, "WIND", 4) == 0) {
-		if (toggle_fullscreen(cur_screen, SDL_FALSE) == SDL_TRUE) return RESOLUTION;
+	} else if (strncmp(*words, "DISP1", 5) == 0) {
+		if (toggle_fullscreen(cur_screen, 0) == SDL_TRUE) return RESOLUTION;
+	} else if (strncmp(*words, "DISP2", 5) == 0) {
+		if (toggle_fullscreen(cur_screen, 1) == SDL_TRUE) return RESOLUTION;
+	} else if (strncmp(*words, "DISP3", 5) == 0) {
+		if (toggle_fullscreen(cur_screen, 2) == SDL_TRUE) return RESOLUTION;
 	}
 	
 	/* Change room if necessary */
